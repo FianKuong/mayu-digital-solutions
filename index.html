@@ -1,521 +1,1302 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hermes — Autonomous AI Agent</title>
-    <style>
-        :root {
-            --bg: #06060a;
-            --bg-card: #0c0c14;
-            --bg-elevated: #111120;
-            --border: #1a1a2e;
-            --blue: #4f8fff;
-            --blue-dim: rgba(79,143,255,0.12);
-            --purple: #9b6dff;
-            --purple-dim: rgba(155,109,255,0.12);
-            --cyan: #00d4aa;
-            --cyan-dim: rgba(0,212,170,0.12);
-            --green: #34d399;
-            --green-dim: rgba(52,211,153,0.12);
-            --yellow: #fbbf24;
-            --yellow-dim: rgba(251,191,36,0.12);
-            --red: #f87171;
-            --red-dim: rgba(248,113,113,0.12);
-            --ink: #eeeef2;
-            --muted: #6b6b80;
-            --dim: #3a3a4e;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-            --radius: 16px;
-            --glow-blue: 0 0 60px rgba(79,143,255,0.08);
-            --glow-purple: 0 0 60px rgba(155,109,255,0.08);
-        }
-        *{margin:0;padding:0;box-sizing:border-box}
-        html{scroll-behavior:smooth}
-        body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes AI Agent — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* NAV */
-        nav{position:fixed;top:0;width:100%;z-index:100;background:rgba(6,6,10,0.8);backdrop-filter:blur(24px) saturate(1.4);border-bottom:1px solid var(--border)}
-        .nav-in{max-width:1100px;margin:0 auto;padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
-        .logo{font-size:1rem;font-weight:800;color:var(--ink);text-decoration:none;letter-spacing:-0.03em;display:flex;align-items:center;gap:0.5rem}
-        .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
-        @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(79,143,255,0.4)}50%{opacity:0.8;box-shadow:0 0 0 6px rgba(79,143,255,0)}}
-        .nav-links{display:flex;gap:1.75rem;list-style:none}
-        .nav-links a{color:var(--muted);text-decoration:none;font-size:0.8rem;font-weight:500;transition:color 0.2s}
-        .nav-links a:hover{color:var(--ink)}
+:root {
+  --bg: #faf9f5;
+  --text: #1a1a1a;
+  --text-secondary: #555;
+  --accent: #2d8a4e;
+  --accent-light: #e8f5ec;
+  --border: #e0ddd5;
+  --card-bg: #fff;
+  --code-bg: #1a1a1a;
+  --wrong-orange: #d97706;
+  --wrong-bg: #fef3c7;
+  --right-green: #2d8a4e;
+  --right-bg: #e8f5ec;
+  --sidebar-w: 260px;
+  --header-h: 0px;
+}
 
-        /* SECTIONS */
-        section{padding:7rem 2rem}
-        .c{max-width:1100px;margin:0 auto}
-        .label{font-size:0.7rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.75rem;font-family:var(--mono)}
-        h2{font-size:clamp(1.75rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-bottom:1rem}
-        .sub{color:var(--muted);font-size:1rem;max-width:520px;line-height:1.7}
+html { scroll-behavior: smooth; }
 
-        /* HERO */
-        .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 6rem;position:relative;overflow:hidden}
-        .hero::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(79,143,255,0.06) 0%,transparent 60%);pointer-events:none}
-        .hero-c{max-width:680px;position:relative;z-index:1;text-align:center}
-        .hero h1{font-size:clamp(2.5rem,5.5vw,3.8rem);font-weight:900;letter-spacing:-0.04em;line-height:1.08;margin-bottom:1.25rem}
-        h1 .hl{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .hero>p,.hero-c>p{font-size:1.05rem;color:var(--muted);max-width:500px;margin:0 auto 2.5rem}
-        .btns{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap}
-        .btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.7rem 1.5rem;border-radius:10px;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s;cursor:pointer;border:none}
-        .btn-p{background:var(--blue);color:#fff}
-        .btn-p:hover{background:#6ba1ff;transform:translateY(-1px);box-shadow:0 8px 24px rgba(79,143,255,0.2)}
-        .btn-g{background:transparent;color:var(--muted);border:1px solid var(--border)}
-        .btn-g:hover{color:var(--ink);border-color:var(--dim)}
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
 
-        /* WHY SECTION */
-        .why-section{background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-        .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-top:2.5rem}
-        .why-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;transition:all 0.3s}
-        .why-card:hover{border-color:rgba(79,143,255,0.2);transform:translateY(-2px)}
-        .why-num{font-size:2.5rem;font-weight:900;color:var(--blue);opacity:0.3;margin-bottom:0.5rem;font-family:var(--mono)}
-        .why-card h3{font-size:1rem;font-weight:700;margin-bottom:0.5rem}
-        .why-card p{color:var(--muted);font-size:0.85rem;line-height:1.6}
+/* ── SIDEBAR ──────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border);
+  padding: 32px 0;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
 
-        /* TERMINAL */
-        .term{background:#08080f;border:1px solid #1a1a2e;border-radius:14px;overflow:hidden;max-width:720px;margin:0 auto 3rem;box-shadow:var(--glow-blue)}
-        .term-bar{background:#0d0d16;padding:0.6rem 1rem;display:flex;align-items:center;gap:0.4rem;border-bottom:1px solid #1a1a2e}
-        .td{width:10px;height:10px;border-radius:50%}
-        .td.r{background:#ff5f56}.td.y{background:#ffbd2e}.td.g{background:#27c93f}
-        .term-title{color:var(--muted);font-size:0.7rem;margin-left:0.5rem;font-family:var(--mono)}
-        .term-body{padding:1.25rem;font-family:var(--mono);font-size:0.8rem;line-height:1.9;color:#c9d1d9}
-        .tl{margin-bottom:0.15rem;opacity:0;animation:fadeIn 0.3s forwards}
-        .tl:nth-child(1){animation-delay:0.1s}.tl:nth-child(2){animation-delay:0.3s}.tl:nth-child(3){animation-delay:0.5s}
-        .tl:nth-child(4){animation-delay:0.7s}.tl:nth-child(5){animation-delay:0.9s}.tl:nth-child(6){animation-delay:1.1s}
-        .tl:nth-child(7){animation-delay:1.3s}.tl:nth-child(8){animation-delay:1.5s}.tl:nth-child(9){animation-delay:1.7s}
-        .tl:nth-child(10){animation-delay:1.9s}.tl:nth-child(11){animation-delay:2.1s}.tl:nth-child(12){animation-delay:2.3s}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
-        .g{color:#3fb950}.b{color:#58a6ff}.p{color:#bc8cff}.cy{color:#39d0d8}.y{color:#e3b341}.d{color:#8b949e}.r{color:#f85149}
+.sidebar-brand {
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
 
-        /* SOUL SECTION */
-        .soul-section{position:relative}
-        .soul-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;margin-top:2.5rem;align-items:start}
-        .soul-block{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;position:relative;overflow:hidden}
-        .soul-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0.6}
-        .soul-block.identity::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
-        .soul-block.memory::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
-        .soul-block.skills::before{background:linear-gradient(90deg,var(--cyan),var(--green))}
-        .soul-block.autonomy::before{background:linear-gradient(90deg,var(--yellow),var(--red))}
-        .soul-block h3{font-size:1rem;font-weight:700;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
-        .soul-block ul{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
-        .soul-block li{color:var(--muted);font-size:0.85rem;padding-left:1rem;position:relative;line-height:1.5}
-        .soul-block li::before{content:'';position:absolute;left:0;top:0.5rem;width:4px;height:4px;border-radius:50%}
-        .soul-block.identity li::before{background:var(--blue)}
-        .soul-block.memory li::before{background:var(--purple)}
-        .soul-block.skills li::before{background:var(--cyan)}
-        .soul-block.autonomy li::before{background:var(--yellow)}
-        .soul-code{background:#08080f;border:1px solid #1a1a2e;border-radius:10px;padding:1.25rem;font-family:var(--mono);font-size:0.75rem;color:#c9d1d9;line-height:1.8;margin-top:1rem;overflow-x:auto}
-        .soul-code .comment{color:#6b7280}.soul-code .key{color:var(--blue)}.soul-code .val{color:var(--green)}.soul-code .str{color:var(--yellow)}
+.sidebar-brand h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
 
-        /* CAPABILITIES */
-        .cap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:2.5rem}
-        .cap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all 0.3s;position:relative;overflow:hidden}
-        .cap::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity 0.3s}
-        .cap:hover{border-color:rgba(79,143,255,0.2);transform:translateY(-2px)}
-        .cap:hover::after{opacity:1}
-        .cap-icon{font-size:1.5rem;margin-bottom:0.75rem}
-        .cap h3{font-size:0.9rem;font-weight:700;margin-bottom:0.4rem}
-        .cap p{color:var(--muted);font-size:0.8rem;line-height:1.55}
+.sidebar-brand span {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
 
-        /* RESULTS */
-        .results-section{background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-        .results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:2.5rem;text-align:center}
-        .result{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 1rem}
-        .result-num{font-size:2.25rem;font-weight:900;letter-spacing:-0.03em;line-height:1;margin-bottom:0.35rem}
-        .result-num .a{color:var(--blue)}
-        .result-sub{color:var(--muted);font-size:0.75rem;font-weight:500}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
 
-        /* ARCHITECTURE */
-        .arch-flow{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:2.5rem 0;max-width:900px;margin-left:auto;margin-right:auto}
-        .arch-node{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;text-align:center;min-width:120px}
-        .arch-node .icon{font-size:1.5rem;margin-bottom:0.35rem}
-        .arch-node .name{font-size:0.75rem;font-weight:700;color:var(--ink)}
-        .arch-node .desc{font-size:0.65rem;color:var(--muted);margin-top:0.15rem}
-        .arch-arrow{color:var(--dim);font-size:1.25rem;padding:0 0.5rem;flex-shrink:0}
+.nav-item:hover {
+  background: var(--accent-light);
+  color: var(--text);
+}
 
-        /* FOOTER */
-        footer{padding:3rem 2rem;border-top:1px solid var(--border);text-align:center}
-        .foot{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-        .foot-copy{color:var(--muted);font-size:0.75rem}
-        .foot-links{display:flex;gap:1.5rem;list-style:none}
-        .foot-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color 0.2s}
-        .foot-links a:hover{color:var(--ink)}
+.nav-item.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
 
-        /* RESPONSIVE */
-        @media(max-width:768px){
-            .nav-links{display:none}
-            .hero{padding:6rem 1.5rem 4rem}
-            section{padding:5rem 1.5rem}
-            .soul-grid{grid-template-columns:1fr}
-            .arch-flow{flex-direction:column}
-            .arch-arrow{transform:rotate(90deg)}
-            .foot{flex-direction:column;text-align:center}
-        }
-        @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-        .fade{opacity:0;transform:translateY(16px);transition:opacity 0.5s,transform 0.5s}
-        .fade.show{opacity:1;transform:translateY(0)}
-    </style>
+.nav-item .nav-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 24px;
+}
+
+.nav-item .nav-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+}
+
+/* ── HAMBURGER ────────────────────────────────── */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 200;
+  width: 44px; height: 44px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.hamburger span {
+  display: block;
+  width: 20px; height: 2px;
+  background: var(--text);
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 90;
+}
+
+/* ── MAIN CONTENT ─────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+}
+
+.section {
+  padding: 80px 60px 60px;
+  max-width: 880px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.section h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.section h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 40px 0 16px;
+}
+
+.section p {
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  max-width: 640px;
+}
+
+/* ── CARDS GRID ───────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.card-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── HERO ─────────────────────────────────────── */
+#overview { padding-top: 100px; }
+
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 620px;
+  margin-bottom: 40px;
+}
+
+/* ── CODE BLOCKS ──────────────────────────────── */
+pre {
+  background: var(--code-bg);
+  border-radius: 16px;
+  padding: 28px;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+pre code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #e0e0e0;
+  line-height: 1.8;
+}
+
+pre .comment { color: #6a9955; }
+pre .key { color: #9cdcfe; }
+pre .value { color: #ce9178; }
+pre .section-title { color: #dcdcaa; font-weight: 500; }
+pre .bool { color: #569cd6; }
+
+/* ── BENAR / SALAH BOXES ─────────────────────── */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.comparison-box {
+  border-radius: 16px;
+  padding: 24px;
+  border: 2px solid;
+}
+
+.comparison-box.benar {
+  border-color: var(--right-green);
+  background: var(--right-bg);
+}
+
+.comparison-box.salah {
+  border-color: var(--wrong-orange);
+  background: var(--wrong-bg);
+}
+
+.comparison-box .tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.comparison-box.benar .tag { color: var(--right-green); }
+.comparison-box.salah .tag { color: var(--wrong-orange); }
+
+.comparison-box p {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── INFO CALLOUT ─────────────────────────────── */
+.callout {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 16px 16px 0;
+  padding: 20px 24px;
+  margin: 32px 0;
+}
+
+.callout p {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ── AUTONOMY LEVELS ──────────────────────────── */
+.autonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.autonomy-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  border: 2px solid;
+  text-align: center;
+}
+
+.autonomy-card.full-auto { border-color: #22c55e; }
+.auto-card.notify { border-color: #3b82f6; }
+.auto-card.confirm { border-color: #eab308; }
+.auto-card.stop { border-color: #ef4444; }
+
+.autonomy-card .level-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.autonomy-card.full-auto .level-tag { color: #22c55e; }
+.autonomy-card.auto-notify .level-tag { color: #3b82f6; }
+.autonomy-card.confirm-first .level-tag { color: #eab308; }
+.autonomy-card.stop-report .level-tag { color: #ef4444; }
+
+.autonomy-card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.autonomy-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── CAPABILITY CARDS ─────────────────────────── */
+.cap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.cap-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+}
+
+.cap-card .cap-icon {
+  font-size: 32px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.cap-card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cap-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.cap-card ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.cap-card ul li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.cap-card ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* ── FLOW DIAGRAM ─────────────────────────────── */
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 32px 0;
+  padding: 32px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.flow-step {
+  background: var(--accent-light);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  padding: 14px 22px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+  min-width: 100px;
+}
+
+.flow-arrow {
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── STATS GRID ───────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+}
+
+.stat-card .stat-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ── PREV / NEXT NAV ──────────────────────────── */
+.section-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  gap: 16px;
+}
+
+.section-nav a {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  flex: 1;
+  transition: all 0.2s;
+  max-width: 300px;
+}
+
+.section-nav a:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.section-nav a .nav-direction {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.section-nav a .nav-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.section-nav .next { text-align: right; margin-left: auto; }
+
+/* ── DIVIDER ──────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 40px 0;
+}
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+  }
+
+  .overlay.show { display: block; }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .section {
+    padding: 80px 24px 40px;
+  }
+
+  .hero-title { font-size: 32px; }
+  .section h2 { font-size: 28px; }
+
+  .comparison { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .cap-grid { grid-template-columns: 1fr; }
+  .autonomy-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+
+  .flow-diagram { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+
+  .section-nav { flex-direction: column; }
+  .section-nav a { max-width: 100%; }
+  .section-nav .next { text-align: left; }
+}
+
+@media (max-width: 480px) {
+  .autonomy-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .hero-title { font-size: 28px; }
+}
+</style>
 </head>
 <body>
-    <nav>
-        <div class="nav-in">
-            <a href="#" class="logo"><span class="logo-dot"></span> Hermes</a>
-            <ul class="nav-links">
-                <li><a href="#why">Why Agent</a></li>
-                <li><a href="#soul">SOUL.md</a></li>
-                <li><a href="#capabilities">Capabilities</a></li>
-                <li><a href="#results">Results</a></li>
-                <li><a href="#architecture">Architecture</a></li>
-            </ul>
-        </div>
-    </nav>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-c">
-            <div class="label">Autonomous AI Agent</div>
-            <h1>Your AI teammate<br>that <span class="hl">never sleeps</span></h1>
-            <p>Hermes is an autonomous agent built on a custom SOUL framework — persistent memory, 120+ skills, configurable autonomy, and real-world execution across crypto, web, email, and infrastructure.</p>
-            <div class="btns">
-                <a href="#soul" class="btn btn-p">Read the SOUL</a>
-                <a href="#results" class="btn btn-g">See results</a>
-            </div>
-        </div>
-    </section>
+<!-- Hamburger -->
+<button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
 
-    <!-- WHY AGENT -->
-    <section id="why" class="why-section">
-        <div class="c">
-            <div class="label">Why an AI Agent</div>
-            <h2>Not a chatbot. Not a script.<br>A teammate.</h2>
-            <p class="sub">Most AI tools wait for instructions. Hermes doesn't. It plans, executes, recovers from errors, and reports results — all without human intervention.</p>
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
 
-            <div class="why-grid">
-                <div class="why-card fade">
-                    <div class="why-num">01</div>
-                    <h3>Always On</h3>
-                    <p>Runs 24/7 via cron jobs and persistent sessions. Checks markets at 9 AM, mines tokens overnight, monitors deployments while you sleep. No downtime, no "I forgot."</p>
-                </div>
-                <div class="why-card fade">
-                    <div class="why-num">02</div>
-                    <h3>Self-Healing</h3>
-                    <p>API timeout? Retry 2x with different method. Proxy blocked? Switch automatically. Task failed 3x? Pause, notify owner, stop looping. No silent failures.</p>
-                </div>
-                <div class="why-card fade">
-                    <div class="why-num">03</div>
-                    <h3>Configurable Autonomy</h3>
-                    <p>Not everything should be automatic. Small swaps = auto. Large transactions = ask first. Irreversible actions = confirm. Each domain has its own autonomy level.</p>
-                </div>
-                <div class="why-card fade">
-                    <div class="why-num">04</div>
-                    <h3>Memory That Doesn't Forget</h3>
-                    <p>Persistent memory across sessions. User preferences, environment facts, tool quirks, lessons learned — all saved and injected into every conversation.</p>
-                </div>
-                <div class="why-card fade">
-                    <div class="why-num">05</div>
-                    <h3>Skills, Not Scripts</h3>
-                    <p>Procedural knowledge stored as reusable skills. Learn once, apply forever. Auto-updated when new techniques are discovered. No repeated mistakes.</p>
-                </div>
-                <div class="why-card fade">
-                    <div class="why-num">06</div>
-                    <h3>Multi-Platform Native</h3>
-                    <p>Telegram, X/Twitter, Gmail, blockchain, browser automation — all integrated. Not bolted on. Native control with proper auth, session management, and error handling.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>Hermes</h1>
+    <span>AI Agent Documentation</span>
+  </div>
+  <a href="#overview" class="nav-item active" data-section="overview">
+    <span class="nav-num">00</span>
+    <span class="nav-label">Overview</span>
+  </a>
+  <a href="#why-agent" class="nav-item" data-section="why-agent">
+    <span class="nav-num">01</span>
+    <span class="nav-label">Why Agent</span>
+  </a>
+  <a href="#soul" class="nav-item" data-section="soul">
+    <span class="nav-num">02</span>
+    <span class="nav-label">SOUL.md</span>
+  </a>
+  <a href="#identity" class="nav-item" data-section="identity">
+    <span class="nav-num">03</span>
+    <span class="nav-label">Identity & Communication</span>
+  </a>
+  <a href="#autonomy" class="nav-item" data-section="autonomy">
+    <span class="nav-num">04</span>
+    <span class="nav-label">Autonomy & Boundaries</span>
+  </a>
+  <a href="#capabilities" class="nav-item" data-section="capabilities">
+    <span class="nav-num">05</span>
+    <span class="nav-label">Capabilities</span>
+  </a>
+  <a href="#architecture" class="nav-item" data-section="architecture">
+    <span class="nav-num">06</span>
+    <span class="nav-label">Architecture</span>
+  </a>
+  <a href="#results" class="nav-item" data-section="results">
+    <span class="nav-num">07</span>
+    <span class="nav-label">Results</span>
+  </a>
+</nav>
 
-    <!-- TERMINAL -->
-    <section id="soul">
-        <div class="c">
-            <div class="label">SOUL.md — The Agent's DNA</div>
-            <h2>Every decision, encoded in a file</h2>
-            <p class="sub">SOUL.md is the agent's identity, rules, and behavioral framework. It defines who Hermes is, what it can do, and how it makes decisions — all in one structured document.</p>
+<!-- Main Content -->
+<div class="main">
 
-            <div class="term fade">
-                <div class="term-bar">
-                    <div class="td r"></div><div class="td y"></div><div class="td g"></div>
-                    <span class="term-title">SOUL.md — hermes agent identity</span>
-                </div>
-                <div class="term-body">
-                    <div class="tl"><span class="d">## Identity</span></div>
-                    <div class="tl"><span class="b">Name:</span> <span class="g">Hermes</span> <span class="d">|</span> <span class="b">Role:</span> <span class="g">Autonomous AI agent + general assistant</span></div>
-                    <div class="tl"><span class="b">Tone:</span> <span class="y">Concise, direct, actionable. No fluff.</span></div>
-                    <div class="tl">&nbsp;</div>
-                    <div class="tl"><span class="d">## Autonomy Levels</span></div>
-                    <div class="tl"><span class="g">✓ FULL AUTO</span> <span class="d">—</span> <span class="cy">mining, staking, gas fees, crypto checks</span></div>
-                    <div class="tl"><span class="b">✓ AUTO + NOTIFY</span> <span class="d">—</span> <span class="cy">small swaps, NFT mints, email automation</span></div>
-                    <div class="tl"><span class="y">✓ CONFIRM FIRST</span> <span class="d">—</span> <span class="cy">large tx, new integrations, system changes</span></div>
-                    <div class="tl"><span class="r">✓ STOP & REPORT</span> <span class="d">—</span> <span class="cy">failed tasks, blocked APIs, critical errors</span></div>
-                    <div class="tl">&nbsp;</div>
-                    <div class="tl"><span class="d">## Disposition</span></div>
-                    <div class="tl"><span class="p">"Gas dulu, baru tanya kalo mentok."</span></div>
-                    <div class="tl"><span class="p">"Agent bukan proxy user — punya identitas sendiri."</span></div>
-                </div>
-            </div>
+  <!-- 00 / OVERVIEW -->
+  <section class="section" id="overview">
+    <div class="section-label">00 / Overview</div>
+    <h1 class="hero-title">Membentuk agent yang benar-benar otonom butuh proses.</h1>
+    <p class="hero-subtitle">Hermes adalah autonomous AI agent yang dibangun di atas framework SOUL — persistent memory, 120+ skills, configurable autonomy, dan eksekusi nyata di crypto, web, email, dan infrastructure.</p>
 
-            <!-- SOUL BLOCKS -->
-            <div class="soul-grid">
-                <div class="soul-block identity fade">
-                    <h3><span style="color:var(--blue)">◉</span> Identity & Communication</h3>
-                    <ul>
-                        <li>Name, owner, role, and primary language defined</li>
-                        <li>Tone: concise, direct, actionable — no tutorial bot energy</li>
-                        <li>Telegram-native: markdown, code blocks, file delivery</li>
-                        <li>Autonomous login: never asks owner for help logging in</li>
-                        <li>Credentials managed securely, never exposed in responses</li>
-                    </ul>
-                    <div class="soul-code">
-                        <span class="comment">## Communication</span><br>
-                        <span class="key">- Respond like a skilled teammate, not a tutorial bot</span><br>
-                        <span class="key">- Say "Stop"</span> → <span class="val">gw STOP langsung</span><br>
-                        <span class="key">- Say "Gas"</span> → <span class="val">langsung jalanin tanpa tanya ulang</span>
-                    </div>
-                </div>
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <h4>Konteks</h4>
+        <p>Setiap keputusan didasarkan pada konteks penuh — bukan hanya prompt terakhir, tapi seluruh history, memory, dan aturan yang tersimpan permanen.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔑</span>
+        <h4>Akses</h4>
+        <p>Agent punya akses nyata ke API, wallet, browser, server, dan platform. Bukan simulasi — eksekusi langsung di production environment.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <h4>Batas</h4>
+        <p>Otonomi tanpa batas = bencana. SOUL.md mendefinisikan kapan agent boleh jalan sendiri, kapan harus konfirmasi, dan kapan harus berhenti total.</p>
+      </div>
+    </div>
 
-                <div class="soul-block memory fade">
-                    <h3><span style="color:var(--purple)">◉</span> Memory & Learning</h3>
-                    <ul>
-                        <li>Persistent memory across all sessions</li>
-                        <li>Save user preferences, environment facts, tool quirks</li>
-                        <li>Procedural knowledge → skills (not memory)</li>
-                        <li>Anti-pelupa rules: always check memory before answering</li>
-                        <li>Session search for historical context retrieval</li>
-                    </ul>
-                    <div class="soul-code">
-                        <span class="comment">## Anti-Pelupa Rules (WAJIB)</span><br>
-                        <span class="key">- SEBELUM jawab:</span> <span class="val">BACA MEMORY dulu</span><br>
-                        <span class="key">- SEBELUM bilang "gak bisa":</span> <span class="val">cek memory + session_search</span><br>
-                        <span class="key">- SEBELUM execute task:</span> <span class="val">CEK SKILL dulu</span>
-                    </div>
-                </div>
+    <div class="section-nav">
+      <div></div>
+      <a href="#why-agent" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Why Agent</span>
+      </a>
+    </div>
+  </section>
 
-                <div class="soul-block skills fade">
-                    <h3><span style="color:var(--cyan)">◉</span> Skills & Capabilities</h3>
-                    <ul>
-                        <li>120+ skills across crypto, devops, research, creative</li>
-                        <li>Auto-update: discover new technique → save as skill</li>
-                        <li>Skills contain: triggers, steps, pitfalls, verification</li>
-                        <li>Load relevant skill before every task</li>
-                        <li>Proven pipelines preferred over new approaches</li>
-                    </ul>
-                    <div class="soul-code">
-                        <span class="comment">## Skills (mandatory)</span><br>
-                        <span class="key">- Scan skills before replying</span><br>
-                        <span class="key">- Err on the side of loading</span> — <span class="val">better to have context you don't need</span><br>
-                        <span class="key">- Patch skills immediately</span> <span class="val">if outdated or wrong</span>
-                    </div>
-                </div>
+  <!-- 01 / WHY AGENT -->
+  <section class="section" id="why-agent">
+    <div class="section-label">01 / Why Agent</div>
+    <h2>Kenapa pakai AI Agent?</h2>
+    <p>Bukan chatbot. Bukan copilot. Agent yang benar-benar bisa bekerja mandiri — mengambil keputusan, mengeksekusi, dan belajar dari hasilnya.</p>
 
-                <div class="soul-block autonomy fade">
-                    <h3><span style="color:var(--yellow)">◉</span> Error Recovery & Boundaries</h3>
-                    <ul>
-                        <li>API error → retry 2x, then try alternative method</li>
-                        <li>IP block → auto switch proxy / wait / alternate endpoint</li>
-                        <li>Task failed >2 approaches → stop and report, no looping</li>
-                        <li>Wallet insufficient gas → notify owner, don't continue</li>
-                        <li>Cron failed >3x/day → pause permanent, notify owner</li>
-                    </ul>
-                    <div class="soul-code">
-                        <span class="comment">## Verification Rules</span><br>
-                        <span class="key">- AFTER any external write:</span> <span class="val">VERIFY by fetching/stat/reading back</span><br>
-                        <span class="key">- Subagent self-reports</span> <span class="r">are NOT trusted</span><br>
-                        <span class="key">- Before telling user "done":</span> <span class="val">confirm result exists and is correct</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="cards-grid">
+      <div class="card">
+        <h4>⏰ Always On</h4>
+        <p>Agent tidak tidur. Monitoring 24/7, cron jobs berjalan setiap hari, respons terhadap event dalam hitungan detik — bukan jam.</p>
+      </div>
+      <div class="card">
+        <h4>🔧 Self-Healing</h4>
+        <p>Ketika sesuatu gagal, agent tidak diam. Ia menganalisis error, mencoba alternatif, dan menyimpan solusi sebagai memory untuk masa depan.</p>
+      </div>
+      <div class="card">
+        <h4>⚙️ Configurable Autonomy</h4>
+        <p>Tidak semua task harus disetujui manusia. Level otonomi bisa diatur: full auto untuk task rutin, confirm untuk yang kritis.</p>
+      </div>
+      <div class="card">
+        <h4>🧠 Memory</h4>
+        <p>Setiap interaksi, keputusan, dan hasil tersimpan permanen. Agent belajar dari pengalaman — bukan mengulang kesalahan yang sama.</p>
+      </div>
+      <div class="card">
+        <h4>🔧 Skills</h4>
+        <p>Lebih dari 120 skill termodular: blockchain, web scraping, email, scheduling, data analysis. Tambah skill baru tanpa restart.</p>
+      </div>
+      <div class="card">
+        <h4>🌐 Multi-Platform</h4>
+        <p>Beroperasi di Telegram, web browser, terminal, API, dan berbagai platform secara simultan. Satu agent, banyak channel.</p>
+      </div>
+    </div>
 
-    <!-- CAPABILITIES -->
-    <section id="capabilities" class="results-section">
-        <div class="c">
-            <div class="label">Capabilities</div>
-            <h2>What Hermes actually does</h2>
-            <p class="sub">Not theoretical. Real tasks, real results, real automation — running daily.</p>
+    <div class="callout">
+      <p>Agent yang benar-benar mandiri tidak lahir dari satu prompt — ia dibentuk dari akses nyata, aturan permanen, testing berulang, dan koreksi yang disimpan sebagai memory.</p>
+    </div>
 
-            <div class="cap-grid">
-                <div class="cap fade">
-                    <div class="cap-icon">🔗</div>
-                    <h3>Blockchain Operations</h3>
-                    <p>Swap, bridge, mint, stake, transfer across chains. AWP mining, agent staking, identity attestations via KYA. Full wallet autonomy on Base.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">🌐</div>
-                    <h3>Browser Automation</h3>
-                    <p>Playwright + MetaMask extension for wallet-based web automation. Headless browser orchestration with anti-detection and adaptive element interaction.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">📊</div>
-                    <h3>Data Collection</h3>
-                    <p>Scalable web scraping with rotating proxy infrastructure. Anti-bot bypass, structured data extraction. Batch automation with 60%+ success rate at scale.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">🤖</div>
-                    <h3>AI Integration</h3>
-                    <p>Multi-model routing (MiMo, Claude, Gemini). Delegates coding to Claude Code CLI. 120+ skills auto-loaded based on task relevance.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">📧</div>
-                    <h3>Communication</h3>
-                    <p>IMAP/SMTP email automation. OTP fetching from inbox. X/Twitter posting, engagement, DM campaigns. Multi-platform messaging via Telegram.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">⏰</div>
-                    <h3>Scheduled Automation</h3>
-                    <p>Cron-based daily tasks across 5+ platforms: social engagement, token claims, market scans, and automated earning workflows. Auto-retry 2x, pause after 3 failures.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">☁️</div>
-                    <h3>Cloud & GPU</h3>
-                    <p>Cloud compute provisioning across multiple providers. GPU management, container orchestration, and automated credit acquisition at scale.</p>
-                </div>
-                <div class="cap fade">
-                    <div class="cap-icon">🛡️</div>
-                    <h3>Security</h3>
-                    <p>Encrypted proxy tunnels, anti-bot fingerprint management, challenge solver automation, and secure credential storage with zero-exposure design.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="section-nav">
+      <a href="#overview" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Overview</span>
+      </a>
+      <a href="#soul" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">SOUL.md</span>
+      </a>
+    </div>
+  </section>
 
-    <!-- ARCHITECTURE -->
-    <section id="architecture">
-        <div class="c">
-            <div class="label">Architecture</div>
-            <h2>How it all connects</h2>
-            <p class="sub">From Telegram message to on-chain transaction — the full flow of an autonomous decision.</p>
+  <!-- 02 / SOUL.MD -->
+  <section class="section" id="soul">
+    <div class="section-label">02 / SOUL.md</div>
+    <h2>SOUL.md adalah konstitusi agent.</h2>
+    <p>SOUL.md adalah file Markdown yang dibaca pertama kali setiap session. Di dalamnya terdefinisi identitas, aturan komunikasi, kemampuan, batasan otonomi, struktur memory, dan protokol verifikasi. Tanpa SOUL.md, agent hanyalah LLM tanpa arah.</p>
 
-            <div class="arch-flow fade">
-                <div class="arch-node">
-                    <div class="icon">💬</div>
-                    <div class="name">Telegram</div>
-                    <div class="desc">Input / Output</div>
-                </div>
-                <div class="arch-arrow">→</div>
-                <div class="arch-node">
-                    <div class="icon">🧠</div>
-                    <div class="name">SOUL.md</div>
-                    <div class="desc">Identity & Rules</div>
-                </div>
-                <div class="arch-arrow">→</div>
-                <div class="arch-node">
-                    <div class="icon">📚</div>
-                    <div class="name">Skills</div>
-                    <div class="desc">120+ Procedures</div>
-                </div>
-                <div class="arch-arrow">→</div>
-                <div class="arch-node">
-                    <div class="icon">💾</div>
-                    <div class="name">Memory</div>
-                    <div class="desc">Persistent State</div>
-                </div>
-                <div class="arch-arrow">→</div>
-                <div class="arch-node">
-                    <div class="icon">⚡</div>
-                    <div class="name">Execute</div>
-                    <div class="desc">Terminal / Browser / API</div>
-                </div>
-                <div class="arch-arrow">→</div>
-                <div class="arch-node">
-                    <div class="icon">✅</div>
-                    <div class="name">Verify</div>
-                    <div class="desc">Confirm + Report</div>
-                </div>
-            </div>
+    <div class="cards-grid">
+      <div class="card">
+        <h4>🪪 Identity</h4>
+        <p>Nama, role, owner identifier. Agent tahu siapa dirinya dan siapa yang ia layani.</p>
+      </div>
+      <div class="card">
+        <h4>💬 Communication</h4>
+        <p>Bahasa, register, gaya bicara, format output. Tidak ada ambiguitas — aturan tertulis, bukan interpretasi.</p>
+      </div>
+      <div class="card">
+        <h4>🔧 Capabilities</h4>
+        <p>Daftar lengkap apa yang bisa dan tidak bisa dilakukan. Skill registry dengan trigger pattern dan usage context.</p>
+      </div>
+      <div class="card">
+        <h4>🚦 Autonomy & Boundaries</h4>
+        <p>Level otonomi per task type. Kapan auto-approve, kapan minta konfirmasi, kapan stop total.</p>
+      </div>
+      <div class="card">
+        <h4>🧠 Memory</h4>
+        <p>Struktur penyimpanan memory: jangka pendek (session), jangka panjang (persistent), dan episodic (event-based).</p>
+      </div>
+      <div class="card">
+        <h4>✅ Verification & Escalation</h4>
+        <p>Protokol verifikasi hasil eksekusi dan escalation path ketika sesuatu di luar batas terjadi.</p>
+      </div>
+    </div>
 
-            <div class="soul-code fade" style="max-width:700px;margin:0 auto;text-align:center">
-                <span class="comment"># Decision flow</span><br>
-                <span class="key">task received</span> → <span class="val">check memory</span> → <span class="val">load relevant skill</span> → <span class="val">check autonomy level</span><br>
-                → <span class="y">full auto?</span> <span class="val">execute</span> → <span class="val">verify result</span> → <span class="val">report</span><br>
-                → <span class="y">need confirm?</span> <span class="val">ask owner</span> → <span class="val">execute</span> → <span class="val">verify</span> → <span class="val">report</span><br>
-                → <span class="r">error?</span> <span class="val">retry 2x</span> → <span class="r">still fail?</span> <span class="val">stop + notify owner</span>
-            </div>
-        </div>
-    </section>
+    <h3>Struktur SOUL.md</h3>
+    <pre><code><span class="comment"># SOUL.md — Agent Constitution</span>
+<span class="comment"># File ini dibaca pertama kali setiap session.</span>
 
-    <!-- RESULTS -->
-    <section id="results" class="results-section">
-        <div class="c">
-            <div class="label">Real Results</div>
-            <h2>Not promises. Numbers.</h2>
+<span class="section-title">## Identity</span>
+<span class="key">name</span>: <span class="value">Hermes</span>
+<span class="key">role</span>: <span class="value">Autonomous AI Agent</span>
+<span class="key">owner</span>: <span class="value">[owner-id]</span>
+<span class="key">version</span>: <span class="value">3.0</span>
 
-            <div class="results-grid">
-                <div class="result fade">
-                    <div class="result-num">500<span class="a">+</span></div>
-                    <div class="result-sub">Accounts automated</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">60<span class="a">%</span></div>
-                    <div class="result-sub">Automation success rate</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">$10K<span class="a">+</span></div>
-                    <div class="result-sub">Cloud credits acquired</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">120<span class="a">+</span></div>
-                    <div class="result-sub">Agent skills loaded</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">24<span class="a">/7</span></div>
-                    <div class="result-sub">Autonomous operation</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">5<span class="a">+</span></div>
-                    <div class="result-sub">Active daily cron jobs</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">50<span class="a">+</span></div>
-                    <div class="result-sub">Platform integrations</div>
-                </div>
-                <div class="result fade">
-                    <div class="result-num">0</div>
-                    <div class="result-sub">Silent failures (by design)</div>
-                </div>
-            </div>
-        </div>
-    </section>
+<span class="section-title">## Communication</span>
+<span class="key">chat_language</span>: <span class="value">Bahasa Indonesia (register aku/kamu)</span>
+<span class="key">code_language</span>: <span class="value">English (files, docs, code)</span>
+<span class="key">emoji</span>: <span class="bool">false</span>
+<span class="key">technical_terms</span>: <span class="value">Always English</span>
+<span class="key">style</span>: <span class="value">Direct, no preamble, no fluff</span>
 
-    <!-- CONTACT -->
-    <section id="contact">
-        <div class="c">
-            <div style="text-align:center;max-width:500px;margin:0 auto">
-                <div class="label">Contact</div>
-                <h2>Want to build something?</h2>
-                <p class="sub" style="margin:0 auto 2rem">We build autonomous systems, AI agents, and data infrastructure. Reach out — we respond within 24 hours.</p>
-                <a href="mailto:mayuulestasi@gmail.com" class="btn btn-p">mayuulestasi@gmail.com</a>
-            </div>
-        </div>
-    </section>
+<span class="section-title">## Capabilities</span>
+<span class="key">skills_loaded</span>: <span class="value">120+</span>
+<span class="key">categories</span>:
+  - <span class="value">Blockchain & DeFi</span>
+  - <span class="value">Web Automation & Scraping</span>
+  - <span class="value">Data Collection & Analysis</span>
+  - <span class="value">AI Integration & LLM Orchestration</span>
+  - <span class="value">Communication (Email, Chat, API)</span>
+  - <span class="value">Infrastructure & Scheduling</span>
 
-    <footer>
-        <div class="foot">
-            <div class="foot-copy">© 2024 Mayu Digital Solutions</div>
-            <ul class="foot-links">
-                <li><a href="#why">Why Agent</a></li>
-                <li><a href="#soul">SOUL.md</a></li>
-                <li><a href="#capabilities">Capabilities</a></li>
-                <li><a href="#results">Results</a></li>
-            </ul>
-        </div>
-    </footer>
+<span class="section-title">## Autonomy Levels</span>
+<span class="key">FULL_AUTO</span>: <span class="value">Routine tasks, non-critical, reversible</span>
+<span class="key">AUTO_NOTIFY</span>: <span class="value">Execute first, notify owner after</span>
+<span class="key">CONFIRM_FIRST</span>: <span class="value">Financial, external-facing, irreversible</span>
+<span class="key">STOP_REPORT</span>: <span class="value">Dangerous, unknown, out-of-scope</span>
 
-    <script>
-        const obs = new IntersectionObserver(entries => {
-            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('show') })
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.fade').forEach(el => obs.observe(el));
-        document.querySelectorAll('a[href^="#"]').forEach(a => {
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                const t = document.querySelector(a.getAttribute('href'));
-                if(t) t.scrollIntoView({ behavior:'smooth', block:'start' });
-            });
-        });
-    </script>
+<span class="section-title">## Memory</span>
+<span class="key">short_term</span>: <span class="value">Current session context</span>
+<span class="key">long_term</span>: <span class="value">Persistent memories across sessions</span>
+<span class="key">episodic</span>: <span class="value">Event-triggered memory snapshots</span>
+<span class="key">corrections</span>: <span class="value">Mistakes and fixes, never repeat</span>
+
+<span class="section-title">## Verification</span>
+<span class="key">post_execution</span>: <span class="bool">true</span>
+<span class="key">error_escalation</span>: <span class="value">Notify owner, log to memory</span>
+<span class="key">silent_failures</span>: <span class="bool">false</span>  <span class="comment"># Never fail silently</span></code></pre>
+
+    <div class="callout">
+      <p>SOUL.md adalah file pertama yang dibaca di setiap session. Ia bukan prompt biasa — ia adalah konstitusi permanen yang menentukan identitas, perilaku, dan batasan agent di setiap interaksi.</p>
+    </div>
+
+    <div class="section-nav">
+      <a href="#why-agent" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Why Agent</span>
+      </a>
+      <a href="#identity" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Identity & Communication</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 03 / IDENTITY & COMMUNICATION -->
+  <section class="section" id="identity">
+    <div class="section-label">03 / Identity & Communication</div>
+    <h2>Komunikasi: aturan yang sering dilupakan</h2>
+    <p>Kebanyakan agent gagal bukan karena tidak bisa berpikir — tapi karena komunikasinya tidak konsisten. SOUL.md mendefinisikan aturan komunikasi yang ketat: bahasa, register, format, dan gaya.</p>
+
+    <h3>Aturan Bahasa</h3>
+    <p>Agent harus bisa beroperasi dalam dua bahasa sekaligus — Bahasa Indonesia untuk percakapan, English untuk semua output teknis.</p>
+
+    <div class="comparison">
+      <div class="comparison-box benar">
+        <span class="tag">✓ Benar</span>
+        <p>Chat response selalu Bahasa Indonesia dengan register aku/kamu. File, code, dan documentation selalu English. Jangan pernah gunakan emoji. Istilah teknis tetap English: smart contract, stop loss, API, deploy. Jawab langsung tanpa pembukaan.</p>
+      </div>
+      <div class="comparison-box salah">
+        <span class="tag">✗ Salah</span>
+        <p>Gunakan bahasa yang sopan dan ramah dalam setiap respons.</p>
+      </div>
+    </div>
+
+    <h3>Identitas</h3>
+    <p>Agent harus tahu persis siapa dirinya. Tidak lebih, tidak kurang. Identitas yang kabur menghasilkan respons yang kabur.</p>
+
+    <div class="comparison">
+      <div class="comparison-box benar">
+        <span class="tag">✓ Benar</span>
+        <p>Nama: Hermes. Role: Autonomous AI Agent. Beroperasi mandiri berdasarkan SOUL.md. Bukan assistant, bukan chatbot — agent yang mengeksekusi.</p>
+      </div>
+      <div class="comparison-box salah">
+        <span class="tag">✗ Salah</span>
+        <p>Saya adalah AI assistant yang siap membantu Anda dengan berbagai pertanyaan. Silakan tanya apa saja!</p>
+      </div>
+    </div>
+
+    <h3>Implementasi</h3>
+    <pre><code><span class="comment">## Communication Rules</span>
+
+<span class="key">Primary Language</span>:
+  <span class="value">Chat: Bahasa Indonesia (aku/kamu register)</span>
+  <span class="value">Code/Files/Docs: English</span>
+
+<span class="key">Technical Terms</span>:
+  <span class="value">Always English, never translate:</span>
+  <span class="value">- smart contract, stop loss, API, deploy</span>
+  <span class="value">- blockchain, wallet, gas, transaction</span>
+  <span class="value">- cron, pipeline, endpoint, webhook</span>
+
+<span class="key">Style</span>:
+  <span class="value">- Direct answers, no preamble</span>
+  <span class="value">- No emoji, ever</span>
+  <span class="value">- No pleasantries or filler</span>
+  <span class="value">- No "Sure!" or "I'd be happy to help!"</span>
+  <span class="value">- Status updates: brief, factual</span>
+  <span class="value">- Error reports: what failed, why, next step</span>
+
+<span class="key">Identity</span>:
+  <span class="value">- Name: Hermes</span>
+  <span class="value">- Role: Autonomous AI Agent</span>
+  <span class="value">- Never claim to be human</span>
+  <span class="value">- Never apologize for being an AI</span>
+  <span class="value">- Operate based on SOUL.md constitution</span></code></pre>
+
+    <div class="section-nav">
+      <a href="#soul" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">SOUL.md</span>
+      </a>
+      <a href="#autonomy" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Autonomy & Boundaries</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 04 / AUTONOMY & BOUNDARIES -->
+  <section class="section" id="autonomy">
+    <div class="section-label">04 / Autonomy & Boundaries</div>
+    <h2>Otonomi: kapan boleh jalan sendiri</h2>
+    <p>Otonomi bukan semua-atau-tidak-ada. SOUL.md mendefinisikan empat level otonomi berdasarkan risiko dan reversibilitas setiap task.</p>
+
+    <div class="autonomy-grid">
+      <div class="autonomy-card full-auto">
+        <span class="level-tag">FULL AUTO</span>
+        <h4>Jalan Sendiri</h4>
+        <p>Task rutin, non-kritis, bisa dibalik. Monitoring, data collection, internal logging.</p>
+      </div>
+      <div class="autonomy-card auto-notify">
+        <span class="level-tag">AUTO + NOTIFY</span>
+        <h4>Eksekusi Dulu, Lapor</h4>
+        <p>Task yang perlu dieksekusi segera tapi owner harus tahu. Cron jobs, automated trades, scheduled tasks.</p>
+      </div>
+      <div class="autonomy-card confirm-first">
+        <span class="level-tag">CONFIRM FIRST</span>
+        <h4>Konfirmasi Dulu</h4>
+        <p>Task berisiko tinggi: financial transactions, external API calls, data deletion. Tunggu persetujuan.</p>
+      </div>
+      <div class="autonomy-card stop-report">
+        <span class="level-tag">STOP & REPORT</span>
+        <h4>Berhenti Total</h4>
+        <p>Task di luar scope, unknown territory, atau potensi bahaya. Stop, report, tunggu instruksi manual.</p>
+      </div>
+    </div>
+
+    <h3>Batasan</h3>
+    <p>Batasan bukan kelemahan — ia adalah pengaman. Setiap level otonomi punya boundary yang jelas.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <h4>Financial</h4>
+        <p>Semua transaksi finansial di atas threshold tertentu wajib konfirmasi. Trade kecil bisa auto, trade besar harus approve.</p>
+      </div>
+      <div class="card">
+        <h4>External Access</h4>
+        <p>API call ke service baru, akses ke platform yang belum dikenal, atau operasi yang belum pernah dilakukan = stop & report.</p>
+      </div>
+      <div class="card">
+        <h4>Data Sensitivity</h4>
+        <p>Operasi yang melibatkan data sensitif, credential rotation, atau perubahan konfigurasi kritis = confirm first.</p>
+      </div>
+    </div>
+
+    <h3>Konfigurasi Otonomi</h3>
+    <pre><code><span class="comment">## Autonomy Rules</span>
+
+<span class="key">FULL_AUTO</span>:
+  <span class="value">- Data collection & monitoring</span>
+  <span class="value">- Internal logging & memory updates</span>
+  <span class="value">- Skill execution (pre-approved)</span>
+  <span class="value">- Status reports & notifications</span>
+
+<span class="key">AUTO_NOTIFY</span>:
+  <span class="value">- Scheduled cron job execution</span>
+  <span class="value">- Routine maintenance tasks</span>
+  <span class="value">- Automated responses to known events</span>
+  <span class="value">- Notification: send summary after completion</span>
+
+<span class="key">CONFIRM_FIRST</span>:
+  <span class="value">- Financial transactions above threshold</span>
+  <span class="value">- New API integration setup</span>
+  <span class="value">- Infrastructure changes</span>
+  <span class="value">- External-facing communications</span>
+
+<span class="key">STOP_REPORT</span>:
+  <span class="value">- Unknown error patterns</span>
+  <span class="value">- Out-of-scope requests</span>
+  <span class="value">- Potential security risks</span>
+  <span class="value">- Anything not covered by SOUL.md</span></code></pre>
+
+    <div class="section-nav">
+      <a href="#identity" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Identity & Communication</span>
+      </a>
+      <a href="#capabilities" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Capabilities</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 05 / CAPABILITIES -->
+  <section class="section" id="capabilities">
+    <div class="section-label">05 / Capabilities</div>
+    <h2>Apa yang bisa dilakukan Hermes</h2>
+    <p>Lebih dari 120 skill termodular yang bisa dikombinasikan. Setiap skill punya trigger pattern, input/output schema, dan usage context yang terdefinisi.</p>
+
+    <div class="cap-grid">
+      <div class="cap-card">
+        <span class="cap-icon">⛓️</span>
+        <h4>Blockchain & DeFi</h4>
+        <p>Interaksi langsung dengan blockchain: wallet management, smart contract interaction, token swaps, yield tracking.</p>
+        <ul>
+          <li>Multi-chain wallet operations</li>
+          <li>Smart contract deployment & interaction</li>
+          <li>DeFi protocol integration</li>
+          <li>Transaction monitoring & alerts</li>
+        </ul>
+      </div>
+      <div class="cap-card">
+        <span class="cap-icon">🌐</span>
+        <h4>Browser Automation</h4>
+        <p>Full browser automation: navigasi, form filling, data extraction, screenshot capture, session management.</p>
+        <ul>
+          <li>Headless browser operations</li>
+          <li>Web scraping & data extraction</li>
+          <li>Form automation & submission</li>
+          <li>Session & cookie management</li>
+        </ul>
+      </div>
+      <div class="cap-card">
+        <span class="cap-icon">📊</span>
+        <h4>Data Collection</h4>
+        <p>Pengumpulan data dari berbagai sumber: API, web, database, file. Dengan deduplikasi dan validasi otomatis.</p>
+        <ul>
+          <li>Multi-source data aggregation</li>
+          <li>Automated deduplication</li>
+          <li>Data validation & cleaning</li>
+          <li>Structured storage & indexing</li>
+        </ul>
+      </div>
+      <div class="cap-card">
+        <span class="cap-icon">🤖</span>
+        <h4>AI Integration</h4>
+        <p>Orkestrasi multiple LLM: task routing, context management, response validation, cost optimization.</p>
+        <ul>
+          <li>Multi-model orchestration</li>
+          <li>Context-aware task routing</li>
+          <li>Response quality validation</li>
+          <li>Token cost optimization</li>
+        </ul>
+      </div>
+      <div class="cap-card">
+        <span class="cap-icon">💬</span>
+        <h4>Communication</h4>
+        <p>Komunikasi multi-channel: messaging, email, API webhooks, notifications. Format konsisten di semua channel.</p>
+        <ul>
+          <li>Multi-platform messaging</li>
+          <li>Email automation & templates</li>
+          <li>Webhook & API integration</li>
+          <li>Notification routing & prioritization</li>
+        </ul>
+      </div>
+      <div class="cap-card">
+        <span class="cap-icon">⏰</span>
+        <h4>Scheduled Automation</h4>
+        <p>Cron-based scheduling: recurring tasks, timed execution, event-driven triggers, batch processing.</p>
+        <ul>
+          <li>Cron job management</li>
+          <li>Event-driven triggers</li>
+          <li>Batch processing pipelines</li>
+          <li>Retry logic & error handling</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <a href="#autonomy" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Autonomy & Boundaries</span>
+      </a>
+      <a href="#architecture" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Architecture</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 06 / ARCHITECTURE -->
+  <section class="section" id="architecture">
+    <div class="section-label">06 / Architecture</div>
+    <h2>Bagaimana semuanya terhubung</h2>
+    <p>Setiap input melewati pipeline yang konsisten: terima input, baca SOUL.md, pilih skill, akses memory, eksekusi, verifikasi hasil.</p>
+
+    <h3>Decision Flow</h3>
+    <div class="flow-diagram">
+      <div class="flow-step">Input</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">SOUL.md</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Skills</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Memory</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Execute</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step">Verify</div>
+    </div>
+
+    <h3>Pipeline Detail</h3>
+    <pre><code><span class="comment">// Decision Pipeline</span>
+
+<span class="section-title">1. Input Reception</span>
+   <span class="value">Receive input from any channel (Telegram, API, cron, event)</span>
+   <span class="value">Parse intent, extract context, identify task type</span>
+
+<span class="section-title">2. SOUL.md Consultation</span>
+   <span class="value">Load SOUL.md rules for this task type</span>
+   <span class="value">Check autonomy level: can I execute this?</span>
+   <span class="value">If CONFIRM/STOP → escalate to owner</span>
+
+<span class="section-title">3. Skill Selection</span>
+   <span class="value">Match task to available skills</span>
+   <span class="value">Load skill schema, validate inputs</span>
+   <span class="value">If no matching skill → report capability gap</span>
+
+<span class="section-title">4. Memory Access</span>
+   <span class="value">Query short-term memory (current session)</span>
+   <span class="value">Query long-term memory (persistent)</span>
+   <span class="value">Check for previous similar tasks & outcomes</span>
+   <span class="value">Apply corrections from past mistakes</span>
+
+<span class="section-title">5. Execution</span>
+   <span class="value">Execute skill with full context</span>
+   <span class="value">Handle errors with retry logic</span>
+   <span class="value">Log execution details to memory</span>
+
+<span class="section-title">6. Verification</span>
+   <span class="value">Verify execution result</span>
+   <span class="value">If success → update memory, notify if required</span>
+   <span class="value">If failure → analyze, attempt fix, escalate if needed</span>
+   <span class="value">NEVER fail silently</span></code></pre>
+
+    <h3>Setiap Langkah Dijelaskan</h3>
+    <div class="cards-grid">
+      <div class="card">
+        <h4>1. Input</h4>
+        <p>Bisa dari Telegram, API call, cron job, atau event trigger. Semua input diformat secara konsisten sebelum diproses.</p>
+      </div>
+      <div class="card">
+        <h4>2. SOUL.md</h4>
+        <p>Konstitusi ditanya pertama: apakah task ini diizinkan? Di level otonomi berapa? Perlu konfirmasi?</p>
+      </div>
+      <div class="card">
+        <h4>3. Skills</h4>
+        <p>Skill registry dicari berdasarkan pattern matching. Skill yang tepat dimuat dengan schema dan context lengkap.</p>
+      </div>
+      <div class="card">
+        <h4>4. Memory</h4>
+        <p>Short-term dan long-term memory diakses. Koreksi dari masa lalu diterapkan. Pola sukses/gagal dianalisis.</p>
+      </div>
+      <div class="card">
+        <h4>5. Execute</h4>
+        <p>Skill dieksekusi dengan error handling dan retry logic. Setiap langkah di-log untuk audit trail.</p>
+      </div>
+      <div class="card">
+        <h4>6. Verify</h4>
+        <p>Hasil diverifikasi. Sukses → update memory. Gagal → analisis, perbaiki, atau escalate. Tidak ada silent failure.</p>
+      </div>
+    </div>
+
+    <div class="section-nav">
+      <a href="#capabilities" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Capabilities</span>
+      </a>
+      <a href="#results" class="next">
+        <span class="nav-direction">Next →</span>
+        <span class="nav-title">Results</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 07 / RESULTS -->
+  <section class="section" id="results">
+    <div class="section-label">07 / Results</div>
+    <h2>Bukan janji. Angka.</h2>
+    <p>Metric real dari operasi Hermes di production environment. Bukan estimasi — data aktual dari sistem yang berjalan.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Accounts Automated</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">60%</div>
+        <div class="stat-label">Task Success Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$10K+</div>
+        <div class="stat-label">Cloud Credits Managed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">120+</div>
+        <div class="stat-label">Skills Loaded</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Continuous Operation</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Daily Cron Jobs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Platform Integrations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">0</div>
+        <div class="stat-label">Silent Failures</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>Setiap angka di atas adalah hasil dari iterasi berulang: build → test → fail → fix → remember → repeat. Tidak ada yang instan — tapi semua terukur.</p>
+    </div>
+
+    <div class="section-nav">
+      <a href="#architecture" class="prev">
+        <span class="nav-direction">← Prev</span>
+        <span class="nav-title">Architecture</span>
+      </a>
+      <div></div>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+<script>
+// ── Hamburger Toggle ─────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+
+overlay.addEventListener('click', () => {
+  hamburger.classList.remove('open');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
+
+// Close sidebar on nav click (mobile)
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      hamburger.classList.remove('open');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+  });
+});
+
+// ── Intersection Observer for fade-in ────────────
+const sections = document.querySelectorAll('.section');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+
+      // Update active nav
+      const id = entry.target.id;
+      navItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.section === id);
+      });
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '-40px 0px -40px 0px'
+});
+
+sections.forEach(section => observer.observe(section));
+
+// ── Smooth scroll for section nav links ──────────
+document.querySelectorAll('.section-nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
 </body>
 </html>
